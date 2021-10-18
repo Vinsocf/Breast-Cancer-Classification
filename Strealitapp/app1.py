@@ -6,11 +6,15 @@ from bokeh.plotting import figure
 import pickle
 import cv2
 import streamlit.components.v1 as components
-st. set_page_config(layout="wide", page_icon=":hospital:")
+st. set_page_config(layout="centered", page_icon=":hospital:")
 st.set_option('deprecation.showPyplotGlobalUse', False)
 import numpy as np
 import pandas as pd
 import altair as alt
+#import cancer_detection
+import cv2
+from keras.models import load_model
+from PIL import Image
 import warnings
 warnings.filterwarnings('ignore')
 from pandas_profiling import ProfileReport
@@ -42,7 +46,15 @@ from tensorflow.keras.layers import Activation, Input, Dense, Dropout,Add, Batch
 from sklearn.preprocessing import LabelEncoder
 from sklearn.metrics import accuracy_score,average_precision_score,f1_score,precision_score,recall_score,roc_auc_score
 
-
+from PIL import Image
+import matplotlib.pyplot as plt
+import tensorflow_hub as hub
+import tensorflow as tf
+import numpy as np
+from tensorflow import keras
+from tensorflow.keras.models import load_model
+from tensorflow.keras import preprocessing
+import time
    
 #menu_data = [
  #       {'icon': "far fa-copy", 'label':"Left End"},
@@ -69,7 +81,7 @@ st.sidebar.image('fight_like_girl.jpg', channels="BGR")
 
     
 st.sidebar.title("Navigation")
-page=st.sidebar.radio("Click on the radio button to know more",['Overview','Visualization','Classification','Hypertuning','Result','Predict Unseen Data'])
+page=st.sidebar.radio("Click on the radio button to know more",['Overview','Visualization','Classification','Hypertuning','Result','Image Prediction','Predict Unseen Data'])
 
 #page=st.sidebar.beta_expander(st.sidebar.title("Hypertuning"), expanded=False)
 #page=st.sidebar.expander ("Hypertuning", expanded=False)
@@ -240,11 +252,11 @@ elif page=='Classification':
         binary1=classification_report(y_pred,y_test)
         class_names = [1, 0]
         plot_confusion_matrix(clf,X_test,y_test,display_labels =class_names)
-        st.set_option('deprecation.showPyplotGlobalUse', False)
-        st.pyplot()
+        st.set_option('deprecation.showPyplotGlobalUse',False)
+        st.pyplot(figsize=(7,5))
         plot_precision_recall_curve(clf,X_test,y_test)
         st.set_option('deprecation.showPyplotGlobalUse', False)
-        st.pyplot()
+        st.pyplot(figsize=(7,5))
 
     def plot_deep(history):
         st.title('Loss Vs Epochs')
@@ -413,7 +425,35 @@ elif page=='Result':
     st.image('final_image.PNG', channels="BGR")
     st.image('feature.png',channels='BGR')
 
+elif page=='Image Prediction':
+     model = load_model("CNN_image_best_model_17102021.h5")
+     st.title("Cancer Detection")
+     st.write("Upload Image")
 
+     img = st.file_uploader("Choose an image...")
+     if img is not None:
+        img = Image.open(img)
+
+        img.save("temp.png")
+        img = "temp.png"
+
+        img = cv2.imread(img, cv2.IMREAD_COLOR)
+        img_size = cv2.resize(img, (50, 50), interpolation=cv2.INTER_LINEAR)
+        img_size = cv2.normalize(
+        img_size, None, alpha=0, beta=1, norm_type=cv2.NORM_MINMAX, dtype=cv2.CV_32F
+        )
+
+        img = img_size.reshape(-1, 50, 50, 3)
+        ans = model.predict(img)
+
+        st.write("")
+        st.write("Classifying...")
+        for x in ans:
+            if x > 0.5:
+                st.write("Malignant")
+            else:
+                st.write("Benign")
+    
 elif page=='Hypertuning':
     classifier_name=st.selectbox(
         'select classifier',
@@ -474,7 +514,7 @@ elif page=='Hypertuning':
 
         if clf == "Logistic Regression":
             R = st.sidebar.slider("Regularization",1,100,step=1)
-            MI = st.sidebar.slider("max_iter",50,400,step=50)
+            MI = st.sidebar.slider("max_iter",10,400,step=50)
             params["R"] = R
             params["MI"] = MI
 
@@ -645,31 +685,44 @@ elif page=='Hypertuning':
 elif page=='Predict Unseen Data':
     st.title("Predict the Input")
 
-    texture_mean=st.slider('texture_mean', X.texture_mean.min(), X.texture_mean.max(), X.texture_mean.mean())
-    area_mean=st.slider('area_mean', X.area_mean.min(), X.area_mean.max(), X.area_mean.mean())
-    concavity_mean=st.slider('concavity_mean', X.concavity_mean.min(), X.concavity_mean.max(), X.concavity_mean.mean())
-    fractal_dimension_mean=st.slider('fractal_dimension_mean', X.fractal_dimension_mean.min(), X.fractal_dimension_mean.max(), X.fractal_dimension_mean.mean())
-    area_se=st.slider('area_se', X.area_se.min(), X.area_se.max(), X.area_se.mean())
-    concavity_se=st.slider('concavity_se', X.concavity_se.min(), X.concavity_se.max(), X.concavity_se.mean())
-    smoothness_worst=st.slider('smoothness_worst', X.smoothness_worst.min(), X.smoothness_worst.max(), X.smoothness_worst.mean())
-    concavity_worst=st.slider('concavity_worst', X.concavity_worst.min(), X.concavity_worst.max(), X.concavity_worst.mean())
-    symmetry_worst=st.slider('symmetry_worst', X.symmetry_worst.min(), X.symmetry_worst.max(), X.symmetry_worst.mean())
-    fractal_dimension_worst=st.slider('fractal_dimension_worst', X.fractal_dimension_worst.min(), X.fractal_dimension_worst.max(), X.fractal_dimension_worst.mean())
-    
-    #def user_input_features():
-     #   texture_mean = st.slider('texture_mean', X.texture_mean.min(), X.texture_mean.max(), X.texture_mean.mean())
-      #  area_mean = st.slider('area_mean', X.area_mean.min(), X.area_mean.max(), X.area_mean.mean())
-       # concavity_mean = st.slider('concavity_mean', X.concavity_mean.min(), X.concavity_mean.max(), X.concavity_mean.mean())
-        #fractal_dimension_mean = st.slider('fractal_dimension_mean', X.fractal_dimension_mean.min(), X.fractal_dimension_mean.max(), X.fractal_dimension_mean.mean())
-        #data = {'texture_mean': texture_mean,
-         #       'area_mean': area_mean,
-          #      'concavity_mean':concavity_mean,
-           #     'fractal_dimension_mean':fractal_dimension_mean}
-        #features = pd.DataFrame(data, index=[0])
-        #return features
+#    texture_mean=st.slider('texture_mean', X.texture_mean.min(), X.texture_mean.max(), X.texture_mean.mean())
+ #   area_mean=st.slider('area_mean', X.area_mean.min(), X.area_mean.max(), X.area_mean.mean())
+  #  concavity_mean=st.slider('concavity_mean', X.concavity_mean.min(), X.concavity_mean.max(), X.concavity_mean.mean())
+   # fractal_dimension_mean=st.slider('fractal_dimension_mean', X.fractal_dimension_mean.min(), X.fractal_dimension_mean.max(), X.fractal_dimension_mean.mean())
+
+    #area_se=st.slider('area_se', X.area_se.min(), X.area_se.max(), X.area_se.mean())
+    #concavity_se=st.slider('concavity_se', X.concavity_se.min(), X.concavity_se.max(), X.concavity_se.mean())
+    #smoothness_worst=st.slider('smoothness_worst', X.smoothness_worst.min(), X.smoothness_worst.max(), X.smoothness_worst.mean())
+   # concavity_worst=st.slider('concavity_worst', X.concavity_worst.min(), X.concavity_worst.max(), X.concavity_worst.mean())
+   # symmetry_worst=st.slider('symmetry_worst', X.symmetry_worst.min(), X.symmetry_worst.max(), X.symmetry_worst.mean())
+   # fractal_dimension_worst=st.slider('fractal_dimension_worst', X.fractal_dimension_worst.min(), X.fractal_dimension_worst.max(), X.fractal_dimension_worst.mean())
+
+
+    col1, col2 ,col3 = st.columns(3)
+
+    with col1:
+  
+        texture_mean=st.number_input("texture_mean")
+        area_mean=st.number_input("area_mean")
+        concavity_mean=st.number_input("concavity_mean")
+        fractal_dimension_mean=st.number_input("fractal_dimension_mean")
+	
+
+    with col2:  
+
+        area_se=st.number_input("area_se")
+        concavity_se=st.number_input("concavity_se")
+        smoothness_worst=st.number_input("smoothness_worst")
+        
+    with col3: 
+        concavity_worst=st.number_input("concavity_worst")
+        symmetry_worst=st.number_input("symmetry_worst")
+        fractal_dimension_worst=st.number_input("fractal_dimension_worst")
 
     def prediction(texture_mean,area_mean,concavity_mean,fractal_dimension_mean,area_se, concavity_se,smoothness_worst,concavity_worst,symmetry_worst,fractal_dimension_worst):
+        
         prediction = classifier.predict([[texture_mean,area_mean,concavity_mean,fractal_dimension_mean,area_se,concavity_se,smoothness_worst,concavity_worst,symmetry_worst,fractal_dimension_worst]])
+
         if prediction <5:
             pred = 'Benign(noncancerous)'
         else:
