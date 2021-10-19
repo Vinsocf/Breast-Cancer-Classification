@@ -11,6 +11,9 @@ st.set_option('deprecation.showPyplotGlobalUse', False)
 import numpy as np
 import pandas as pd
 import altair as alt
+import sweetviz as sv 
+import codecs
+from sklearn.preprocessing import StandardScaler
 #import cancer_detection
 import cv2
 from keras.models import load_model
@@ -81,15 +84,25 @@ st.sidebar.image('fight_like_girl.jpg', channels="BGR")
 
     
 st.sidebar.title("Navigation")
-page=st.sidebar.radio("Click on the radio button to know more",['Overview','Visualization','Classification','Hypertuning','Result','Image Prediction','Predict Unseen Data'])
+page=st.sidebar.radio("Click on the radio button to know more",['Overview','EDA','Visualization','Classification','Hypertuning','Result','Predict Unseen Data','Image Prediction'])
 
+st.markdown(
+    f'''
+        <style>
+            .sidebar .sidebar-content {{
+                width: 5px;
+            }}
+        </style>
+    ''',
+    unsafe_allow_html=True
+)
 #page=st.sidebar.beta_expander(st.sidebar.title("Hypertuning"), expanded=False)
 #page=st.sidebar.expander ("Hypertuning", expanded=False)
 #st.sidebar.beta_expander("Hypertuning", expanded=False):
 
 pickle_in = open('model.pkl', 'rb') 
 classifier = pickle.load(pickle_in)
-
+scaler = pickle.load(open('scaler.pkl', 'rb'))
     
 df=pd.read_csv("data.csv")
 df=df.drop(['id',"Unnamed: 32"],axis=1)
@@ -421,13 +434,23 @@ elif page=='Classification':
 
     apply_algo(classifier_name,feature_name,X,y)
 elif page=='Result':
-    st.title("Result Page")
-    st.image('final_image.PNG', channels="BGR")
-    st.image('feature.png',channels='BGR')
+     st.title("Result Page")
+     st.image('final_image.PNG', channels="BGR")
+     st.image('feature.png',channels='BGR')
+
+
+elif page=='EDA':
+     st.subheader("Automated EDA with Sweetviz")
+     report = sv.analyze(df)
+     report.show_html()
+     report_file = codecs.open("SWEETVIZ_REPORT.html",'r')
+     page = report_file.read()
+     components.html(page, width=2000, height=750, scrolling=True)
+     #components.html(page,width=width,height=height,scrolling=True)
 
 elif page=='Image Prediction':
      model = load_model("CNN_image_best_model_17102021.h5")
-     st.title("Cancer Detection")
+     st.title("Prediction")
      st.write("Upload Image")
 
      img = st.file_uploader("Choose an image...")
@@ -683,7 +706,7 @@ elif page=='Hypertuning':
     apply_algo1(classifier_name,feature_name,X,params,y)
     
 elif page=='Predict Unseen Data':
-    st.title("Predict the Input")
+    st.title("Prediction")
 
 #    texture_mean=st.slider('texture_mean', X.texture_mean.min(), X.texture_mean.max(), X.texture_mean.mean())
  #   area_mean=st.slider('area_mean', X.area_mean.min(), X.area_mean.max(), X.area_mean.mean())
@@ -720,9 +743,9 @@ elif page=='Predict Unseen Data':
         fractal_dimension_worst=st.number_input("fractal_dimension_worst")
 
     def prediction(texture_mean,area_mean,concavity_mean,fractal_dimension_mean,area_se, concavity_se,smoothness_worst,concavity_worst,symmetry_worst,fractal_dimension_worst):
-        
+        #final_features = scaler.transform(texture_mean,area_mean,concavity_mean,fractal_dimension_mean,area_se, concavity_se,smoothness_worst,concavity_worst,symmetry_worst,fractal_dimension_worst)   
         prediction = classifier.predict([[texture_mean,area_mean,concavity_mean,fractal_dimension_mean,area_se,concavity_se,smoothness_worst,concavity_worst,symmetry_worst,fractal_dimension_worst]])
-
+        #prediction = classifier.predict(final_features)
         if prediction <5:
             pred = 'Benign(noncancerous)'
         else:
@@ -733,4 +756,3 @@ elif page=='Predict Unseen Data':
     if st.button("Predict"): 
         result = prediction(texture_mean,area_mean,concavity_mean,fractal_dimension_mean,area_se,concavity_se,smoothness_worst,concavity_worst,symmetry_worst,fractal_dimension_worst) 
         st.success('The Result is  {}'.format(result))
-#df1 = user_input_features()
