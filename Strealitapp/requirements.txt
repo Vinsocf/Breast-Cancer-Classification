@@ -12,3 +12,4 @@ xgboost
 hydralit_components
 catboost
 fsspec
+bokeh
