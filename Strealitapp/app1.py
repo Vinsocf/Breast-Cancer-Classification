@@ -4,7 +4,7 @@ import pandas as pd
 import plotly.express as px
 from bokeh.plotting import figure
 import pickle
-import cv2
+import opencv
 import streamlit.components.v1 as components
 st. set_page_config(layout="centered", page_icon=":hospital:")
 st.set_option('deprecation.showPyplotGlobalUse', False)
