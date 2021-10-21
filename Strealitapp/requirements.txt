@@ -9,7 +9,4 @@ sweetviz
 sklearn
 keras
 xgboost
-warnings
 hydralit_components
-pandas_profiling
-
