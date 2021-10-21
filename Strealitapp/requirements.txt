@@ -8,7 +8,6 @@ plotly
 sweetviz
 sklearn
 keras
-PIL
 xgboost
 warnings
 hydralit_components
