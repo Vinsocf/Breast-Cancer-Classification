@@ -6,9 +6,7 @@ matplotlib
 Pillow
 plotly
 sweetviz
-codecs
 sklearn
-tensorflow
 keras
 PIL
 xgboost
