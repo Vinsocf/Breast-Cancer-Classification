@@ -5,7 +5,6 @@ numpy
 matplotlib
 Pillow
 plotly
-cv2
 sweetviz
 codecs
 sklearn
