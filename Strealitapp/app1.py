@@ -116,9 +116,9 @@ st.markdown(
 #page=st.sidebar.expander ("Hypertuning", expanded=False)
 #st.sidebar.beta_expander("Hypertuning", expanded=False):
 
-pickle_in = open('model.pkl', 'rb') 
+pickle_in = open('https://github.com/Vinsocf/Breast-Cancer-Classification/blob/main/Strealitapp/model.pkl', 'rb') 
 classifier = pickle.load(pickle_in)
-scaler = pickle.load(open('scaler.pkl', 'rb'))
+scaler = pickle.load(open('https://github.com/Vinsocf/Breast-Cancer-Classification/blob/main/Strealitapp/scaler.pkl', 'rb'))
     
 df=pd.read_csv("data.csv")
 df=df.drop(['id',"Unnamed: 32"],axis=1)
