@@ -20,10 +20,10 @@ from keras.models import load_model
 from PIL import Image
 import warnings
 warnings.filterwarnings('ignore')
-from pandas_profiling import ProfileReport
-from streamlit_pandas_profiling import st_profile_report
+#from pandas_profiling import ProfileReport
+#from streamlit_pandas_profiling import st_profile_report
 import sweetviz as sv
-from pandas_profiling import ProfileReport
+#from pandas_profiling import ProfileReport
 import streamlit.components.v1 as components
 
 from sklearn.tree import DecisionTreeClassifier
