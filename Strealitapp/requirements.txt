@@ -15,4 +15,4 @@ fsspec
 opencv-python
 bokeh
 opencv-python-headless
-pip install opencv-python
+
