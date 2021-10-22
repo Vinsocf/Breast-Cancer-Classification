@@ -15,4 +15,5 @@ fsspec
 opencv-python
 bokeh
 opencv-python-headless
+opencv
 
