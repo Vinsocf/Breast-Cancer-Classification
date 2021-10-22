@@ -15,7 +15,7 @@ import sweetviz as sv
 import codecs
 from sklearn.preprocessing import StandardScaler
 #import cancer_detection
-import opencv-python
+import opencv
 from keras.models import load_model
 from PIL import Image
 import warnings
