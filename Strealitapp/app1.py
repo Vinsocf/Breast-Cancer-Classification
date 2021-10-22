@@ -91,10 +91,10 @@ os.environ["db_username"] == st.secrets["db_username"]
 #get the id of the menu item clicked
 #st.info(f"{menu_id=}")
 
-img = Image.open("fight_like_girl.jpg")
-st.sidebar.image(img)
+#img = Image.open("fight_like_girl.jpg")
+#st.sidebar.image(img)
 
-
+st.sidebar.image("https://github.com/Vinsocf/Breast-Cancer-Classification/blob/main/Strealitapp/fight_like_girl.jpg")
 #st.sidebar.image('fight_like_girl.jpg', channels="BGR")
 
 
