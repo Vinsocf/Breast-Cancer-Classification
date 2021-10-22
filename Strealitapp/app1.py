@@ -1,10 +1,10 @@
 import streamlit as st 
 import pandas as pd 
-#import plotly.graph_objects as go
+import plotly.graph_objects as go
 import plotly.express as px
 from bokeh.plotting import figure
 import pickle
-#import CV2
+import cv2
 import streamlit.components.v1 as components
 st. set_page_config(layout="centered", page_icon=":hospital:")
 st.set_option('deprecation.showPyplotGlobalUse', False)
@@ -15,15 +15,15 @@ import sweetviz as sv
 import codecs
 from sklearn.preprocessing import StandardScaler
 #import cancer_detection
-#import opencv-python
+import cv2
 from keras.models import load_model
 from PIL import Image
 import warnings
 warnings.filterwarnings('ignore')
-#from pandas_profiling import ProfileReport
-#from streamlit_pandas_profiling import st_profile_report
+from pandas_profiling import ProfileReport
+from streamlit_pandas_profiling import st_profile_report
 import sweetviz as sv
-#from pandas_profiling import ProfileReport
+from pandas_profiling import ProfileReport
 import streamlit.components.v1 as components
 
 from sklearn.tree import DecisionTreeClassifier
@@ -58,20 +58,7 @@ from tensorflow import keras
 from tensorflow.keras.models import load_model
 from tensorflow.keras import preprocessing
 import time
-import streamlit as st
-
-# Everything is accessible via the st.secrets dict:
-
-st.write("DB username:", st.secrets["db_username"])
-st.write("DB password:", st.secrets["db_password"])
-st.write("My cool secrets:", st.secrets["my_cool_secrets"]["things_i_like"])
-
-# And the root-level secrets are also accessible as environment variables:
-
-import os
-st.write("Has environment variables been set:",
-os.environ["db_username"] == st.secrets["db_username"]
-)   
+   
 #menu_data = [
  #       {'icon': "far fa-copy", 'label':"Left End"},
   #      {'id':'Copy','icon':"🐙",'label':"Copy"},
@@ -91,11 +78,8 @@ os.environ["db_username"] == st.secrets["db_username"]
 #get the id of the menu item clicked
 #st.info(f"{menu_id=}")
 
-#img = Image.open("fight_like_girl.jpg")
-#st.sidebar.image(img)
 
-st.sidebar.image("https://github.com/Vinsocf/Breast-Cancer-Classification/blob/main/Strealitapp/fight_like_girl.jpg")
-#st.sidebar.image('fight_like_girl.jpg', channels="BGR")
+st.sidebar.image('fight_like_girl.jpg', channels="BGR")
 
 
     
@@ -116,10 +100,9 @@ st.markdown(
 #page=st.sidebar.expander ("Hypertuning", expanded=False)
 #st.sidebar.beta_expander("Hypertuning", expanded=False):
 
-#pickle_in = open('https://github.com/Vinsocf/Breast-Cancer-Classification/blob/main/Strealitapp/model.pkl', 'rb') 
-pickle_in = pickle.load(open('https://github.com/Vinsocf/Breast-Cancer-Classification/blob/main/Strealitapp/model.pkl', 'rb'))
+pickle_in = open('model.pkl', 'rb') 
 classifier = pickle.load(pickle_in)
-scaler = pickle.load(open('https://github.com/Vinsocf/Breast-Cancer-Classification/blob/main/Strealitapp/scaler.pkl', 'rb'))
+scaler = pickle.load(open('scaler.pkl', 'rb'))
     
 df=pd.read_csv("data.csv")
 df=df.drop(['id',"Unnamed: 32"],axis=1)
